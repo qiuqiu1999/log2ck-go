@@ -19,23 +19,24 @@ func NewLogFile(path string) *LogFile {
 
 type LogFile struct {
 	Path   string
-	IsRun  bool
+	status bool
 	Cancel context.CancelFunc
 	Ctx    context.Context
 }
 
-func (l *LogFile) exit() {
-	l.IsRun = false
+func (l *LogFile) IsRunning() bool {
+	return l.status
 }
 
 func (l *LogFile) Run() {
-	l.IsRun = true
+	l.status = true
 	go func() {
 		// 开始监控文件
 		for {
 			select {
 			case <-l.Ctx.Done():
 				fmt.Printf("%d 日志已过期\n", l.Path)
+				l.status = false
 				runtime.Goexit()
 			default:
 				fmt.Printf("%s 读取新数据\n", l.Path)

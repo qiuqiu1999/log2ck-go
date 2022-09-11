@@ -36,7 +36,6 @@ func (l *LogManager) Run() {
 
 // 添加
 func (l *LogManager) entry() {
-	// TODO 查找所有文件
 	for i := 0; i < 2; i++ {
 		LogFile := NewLogFile(strconv.Itoa(i))
 		LogFile.Run()
@@ -46,20 +45,30 @@ func (l *LogManager) entry() {
 
 // 检查日志
 func (l *LogManager) check() {
-	// TODO 日志文件是否有效
-	// 日期是否有效，过期旧退出监控协程
-	// 是否有在监控，没有就启动
-	log.Println("checking log files")
 	for k, v := range l.list {
+		if l.checkType(k) != true {
+			v.Cancel()
+			delete(l.list, k)
+			continue
+		}
 		if l.checkDate(k) != true {
 			v.Cancel()
 			delete(l.list, k)
-
+			continue
+		}
+		if v.IsRunning() != true {
+			v.Run()
 		}
 	}
 }
 
-// 检查日期
+func (l *LogManager) checkType(path string) bool {
+	if path == "1" {
+		return false
+	}
+	return true
+}
+
 func (l *LogManager) checkDate(path string) bool {
 	if path == "1" {
 		return false
