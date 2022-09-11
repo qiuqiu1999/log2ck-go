@@ -1,6 +1,7 @@
-package monitor
+package src
 
 import (
+	"github.com/spf13/viper"
 	"path/filepath"
 	"strings"
 )
@@ -25,10 +26,7 @@ func NewSetting(confFile string) (*Setting, error) {
 }
 
 type ServerSetting struct {
-	RunMode      string
-	HttpPort     int
-	ReadTimeout  int
-	WriteTimeout int
+	RunMode string
 }
 
 func (s *Setting) ReadSection(k string, v interface{}) error {
@@ -36,6 +34,5 @@ func (s *Setting) ReadSection(k string, v interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
